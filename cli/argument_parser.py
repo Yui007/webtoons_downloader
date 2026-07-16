@@ -23,6 +23,11 @@ def setup_parser():
     parser.add_argument("--single", type=int, help="Download a single episode.")
     parser.add_argument("--all", action="store_true", help="Download all episodes.")
     parser.add_argument("--threads", type=int, default=10, help="Number of threads to use for downloading (default: 10).")
+    parser.add_argument(
+        "--original-quality",
+        action="store_true",
+        help="Download original-quality source images (uses more bandwidth and storage).",
+    )
     
     # Format conversion
     parser.add_argument("--format", type=str, choices=["pdf", "cbz"], help="Convert downloaded chapters to PDF or CBZ.")

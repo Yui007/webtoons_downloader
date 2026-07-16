@@ -2,8 +2,28 @@
 
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from utils.config import SEARCH_URL
 from utils.logger import logger
+
+
+def get_original_image_url(image_url):
+    """Remove Webtoon's q90 transformation while preserving other URL parts."""
+    parsed_url = urlsplit(image_url)
+    query_params = parse_qsl(parsed_url.query, keep_blank_values=True)
+    filtered_params = [
+        (key, value)
+        for key, value in query_params
+        if not (key == "type" and value == "q90")
+    ]
+
+    if len(filtered_params) == len(query_params):
+        return image_url
+
+    return urlunsplit(
+        parsed_url._replace(query=urlencode(filtered_params, doseq=True))
+    )
+
 
 def search_manga(query, lang='en'):
     """Search for a manga on Webtoons across all result pages."""
@@ -110,7 +130,7 @@ def scrape_episodes(manga_url, lang='en'):
     logger.info(f"Found {len(episodes)} total episodes.")
     return sorted(episodes, key=lambda x: x['number'])
 
-def scrape_chapter_images(episode_url):
+def scrape_chapter_images(episode_url, original_quality=False):
     """Scrape all image URLs from a single episode page."""
     try:
         response = requests.get(episode_url)
@@ -127,7 +147,10 @@ def scrape_chapter_images(episode_url):
         for img in img_tags:
             # The image URL is in the 'data-url' attribute
             if img.has_attr("data-url"):
-                image_urls.append(img["data-url"])
+                image_url = img["data-url"]
+                if original_quality:
+                    image_url = get_original_image_url(image_url)
+                image_urls.append(image_url)
         
         logger.info(f"Found {len(image_urls)} images in {episode_url}")
         return image_urls

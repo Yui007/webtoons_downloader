@@ -59,6 +59,15 @@ def get_cleanup_choice():
     """Prompt the user whether to clean up image files."""
     return typer.confirm("\nDo you want to delete the raw image folders after conversion?")
 
+
+def get_original_quality_choice():
+    """Prompt the user whether to download original-quality source images."""
+    return typer.confirm(
+        "\nDownload original-quality images? (larger files)",
+        default=False,
+    )
+
+
 def get_chapter_choice(episodes):
     """Prompt the user to choose which chapters to download."""
     console.print("\n[bold green]Download Options:[/bold green]")
@@ -133,11 +142,14 @@ def select_manga_from_results(results):
 
 def process_chapter_interactive(chapter_data):
     """Worker function for interactive chapter processing."""
-    chapter, manga_title, output_format, cleanup, num_threads = chapter_data
+    chapter, manga_title, output_format, cleanup, num_threads, original_quality = chapter_data
     try:
         console.print(f"\nProcessing: [bold cyan]{chapter['title']}[/bold cyan]")
         
-        image_urls = scrape_chapter_images(chapter['url'])
+        image_urls = scrape_chapter_images(
+            chapter['url'],
+            original_quality=original_quality,
+        )
         if not image_urls:
             console.print(f"Could not find images for {chapter['title']}.", style="bold red")
             return
@@ -206,6 +218,7 @@ def main():
         if chapters_to_download:
             output_format = get_format_choice()
             cleanup = get_cleanup_choice()
+            original_quality = get_original_quality_choice()
             num_threads = get_num_threads()
 
             console.print(f"\n[bold green]Starting download...[/bold green]")
@@ -214,7 +227,10 @@ def main():
             create_directory(os.path.join(OUTPUT_DIR, manga_title))
 
             with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-                chapter_data_list = [(chapter, manga_title, output_format, cleanup, num_threads) for chapter in chapters_to_download]
+                chapter_data_list = [
+                    (chapter, manga_title, output_format, cleanup, num_threads, original_quality)
+                    for chapter in chapters_to_download
+                ]
                 
                 results = list(tqdm(executor.map(process_chapter_interactive, chapter_data_list), total=len(chapters_to_download), desc="Processing Chapters"))
 

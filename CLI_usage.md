@@ -36,6 +36,14 @@ python main.py --url "https://www.webtoons.com/en/fantasy/the-lone-necromancer/l
 python main.py --url "https://www.webtoons.com/en/fantasy/the-lone-necromancer/list?title_no=3690" --download --all
 ```
 
+### Original-Quality Images
+
+Webtoon normally provides bandwidth-optimized images. Add `--original-quality` to download the original source images instead. This option uses more bandwidth and storage and applies to raw image folders, CBZ, and PDF output. PDF conversion may still re-encode the images.
+
+```bash
+python main.py --url "https://www.webtoons.com/en/action/overwatch/list?title_no=9843" --download --single 1 --format cbz --original-quality
+```
+
 ### Language Selection
 
 You can specify the language of the webtoon you want to download or Search using the `--lang` flag. This is useful for Searching and downloading from non-English versions of Webtoons.
@@ -84,6 +92,7 @@ The interactive menu will guide you through the following steps:
 4.  **Choose Chapters:** Select whether you want to download all episodes, a specific range, or a single episode.
 5.  **Select Format:** Choose between PDF and CBZ for the output format.
 6.  **Cleanup:** Decide if you want to delete the raw image folders after the conversion is complete.
-7.  **Set Thread Count:** Specify the number of threads to use for downloading to accelerate the process.
+7.  **Choose Image Quality:** Decide whether to download the larger original-quality source images.
+8.  **Set Thread Count:** Specify the number of threads to use for downloading to accelerate the process.
 
 The interactive mode is designed to be intuitive and requires no prior knowledge of the command-line arguments.

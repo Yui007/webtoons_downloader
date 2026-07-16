@@ -18,6 +18,7 @@ A powerful and user-friendly tool to download your favorite comics from [Webtoon
     -   Download all chapters, a specific range, or a single chapter.
 -   **High Performance**: Utilizes parallel downloading to fetch multiple chapters at once, saving you time.
 -   **Multiple Formats**: Save chapters as PDF, CBZ, or keep the raw images.
+-   **Original-Quality Images**: Optionally download Webtoon's original source images for maximum quality.
 -   **Multi-Language Support**: Search and download webtoons in different languages.
 -   **Automatic Cleanup**: Option to automatically delete raw image folders after conversion.
 -   **Responsive & Modern UI**: The GUI is designed to be intuitive and aesthetically pleasing, with asynchronous operations to prevent freezing.
@@ -53,6 +54,11 @@ python main.py --search "Love"
 **Download a range of chapters in PDF format:**
 ```bash
 python main.py --url "https://www.webtoons.com/en/fantasy/the-lone-necromancer/list?title_no=3690" --download --range 1-10 --format pdf
+```
+
+**Download an episode using original-quality images:**
+```bash
+python main.py --url "https://www.webtoons.com/en/action/overwatch/list?title_no=9843" --download --single 1 --format cbz --original-quality
 ```
 
 **Start the interactive mode:**

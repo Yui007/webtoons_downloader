@@ -37,6 +37,7 @@ The GUI provides a user-friendly interface to search for, select, and download y
     -   **CBZ**: Converts each chapter into a separate CBZ archive, which is ideal for comic book readers.
     -   **None**: Downloads the chapter images as-is, without any conversion.
 -   **Cleanup**: Check the "Delete images after conversion" box to automatically remove the raw image folders once the PDF or CBZ file has been created. This option is ignored if the format is "None".
+-   **Original Quality**: Check "Original-quality images (larger files)" to download Webtoon's original source images instead of its bandwidth-optimized versions. This increases download size and applies to every output format. PDF conversion may still re-encode the images.
 
 ### 5. Start Downloading
 
