@@ -22,7 +22,10 @@ def process_chapter(chapter_data):
     episode, manga_title, args = chapter_data
     try:
         logger.info(f"Processing Episode {episode['number']}: {episode['title']}")
-        image_urls = scrape_chapter_images(episode['url'])
+        image_urls = scrape_chapter_images(
+            episode['url'],
+            original_quality=args.original_quality,
+        )
         if image_urls:
             chapter_dir = download_chapter(manga_title, episode['number'], image_urls, args.threads)
             if args.format and chapter_dir:

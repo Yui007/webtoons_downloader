@@ -27,12 +27,13 @@ class WorkerSignals(QObject):
     error = pyqtSignal(str)
 
 class DownloadWorker(QRunnable):
-    def __init__(self, manga_title, episode, selected_format, clean_up):
+    def __init__(self, manga_title, episode, selected_format, clean_up, original_quality=False):
         super().__init__()
         self.manga_title = manga_title
         self.episode = episode
         self.selected_format = selected_format
         self.clean_up = clean_up
+        self.original_quality = original_quality
         self.signals = WorkerSignals()
 
     @pyqtSlot()
@@ -40,7 +41,10 @@ class DownloadWorker(QRunnable):
         try:
             episode_num = self.episode['number']
             self.signals.progress.emit(f"Downloading Episode {episode_num}")
-            image_urls = scrape_chapter_images(self.episode['url'])
+            image_urls = scrape_chapter_images(
+                self.episode['url'],
+                original_quality=self.original_quality,
+            )
             chapter_dir = download_chapter(self.manga_title, episode_num, image_urls)
             
             if chapter_dir:
@@ -68,12 +72,13 @@ class DownloadThread(QThread):
     progress = pyqtSignal(int, str)
     finished = pyqtSignal()
 
-    def __init__(self, manga_title, episodes, selected_format, clean_up):
+    def __init__(self, manga_title, episodes, selected_format, clean_up, original_quality=False):
         super().__init__()
         self.manga_title = manga_title
         self.episodes = episodes
         self.selected_format = selected_format
         self.clean_up = clean_up
+        self.original_quality = original_quality
         self.threadpool = QThreadPool()
         self.threadpool.setMaxThreadCount(10)
         self.chapters_done = 0
@@ -91,6 +96,7 @@ class DownloadThread(QThread):
                 episode,
                 self.selected_format,
                 self.clean_up,
+                self.original_quality,
             )
             worker.signals.progress.connect(lambda msg: self.progress.emit(-1, msg))
             worker.signals.error.connect(lambda msg: self.progress.emit(-1, msg))
@@ -202,8 +208,15 @@ class MainWindow(QMainWindow):
         
         selected_format = self.options_panel.format_selector.currentText()
         clean_up = self.options_panel.cleanup_checkbox.isChecked()
+        original_quality = self.options_panel.original_quality_checkbox.isChecked()
 
-        self.download_thread = DownloadThread(self.selected_manga_title, selected_episodes, selected_format, clean_up)
+        self.download_thread = DownloadThread(
+            self.selected_manga_title,
+            selected_episodes,
+            selected_format,
+            clean_up,
+            original_quality,
+        )
         self.download_thread.progress.connect(self.update_progress)
         self.download_thread.finished.connect(self.on_download_finished)
         self.download_thread.start()

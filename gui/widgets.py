@@ -126,10 +126,12 @@ class OptionsPanel(QWidget):
         self.format_selector.addItems(["PDF", "CBZ", "None"])
         
         self.cleanup_checkbox = QCheckBox("Delete images after conversion")
+        self.original_quality_checkbox = QCheckBox("Original-quality images (larger files)")
         
         self.layout.addWidget(QLabel("Format:"))
         self.layout.addWidget(self.format_selector)
         self.layout.addWidget(self.cleanup_checkbox)
+        self.layout.addWidget(self.original_quality_checkbox)
 
 class StatusPanel(QWidget):
     def __init__(self, parent=None):
